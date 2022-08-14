@@ -1,0 +1,9 @@
+description = "Amazon Linux 2 base builder with no buildpacks included. To use, specify buildpacks at build time."
+
+[lifecycle]
+  version = "0.14.1"
+
+[stack]
+  id = "io.buildpacks.stacks.amazonlinux"
+  build-image = "jericop/amazonlinux-build:base-cnb"
+  run-image = "jericop/amazonlinux-run:base-cnb"
