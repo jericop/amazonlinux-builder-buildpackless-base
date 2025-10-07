@@ -1,9 +1,23 @@
-description = "Amazon Linux 2 base builder with no buildpacks included. To use, specify buildpacks at build time."
+description = "Amazon Linux 2023 base builder with no buildpacks included. To use, specify buildpacks at build time."
+
+[build]
+  image = "docker.io/jericop/amazonlinux-build:base-cnb"
 
 [lifecycle]
-  version = "0.14.1"
+  version = "0.20.14"
+
+[run]
+
+[[run.images]]
+  image = "docker.io/jericop/amazonlinux-run:base-cnb"
 
 [stack]
-  id = "io.buildpacks.stacks.amazonlinux"
-  build-image = "jericop/amazonlinux-build:base-cnb"
-  run-image = "jericop/amazonlinux-run:base-cnb"
+  id = "io.buildpacks.stacks.amazonlinux.2023"
+
+[[targets]]
+  arch = "amd64"
+  os = "linux"
+
+[[targets]]
+  arch = "arm64"
+  os = "linux"
