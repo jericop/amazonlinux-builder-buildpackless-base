@@ -92,7 +92,8 @@ export SAMPLE=samples-go-no-imports
 log_message "STATE: Building ${SAMPLE} with builder: ${builder_uri}"
 
 pack build ${SAMPLE} --path go/no-imports --pull-policy if-not-present \
-    --builder ${builder_uri}
+    --builder ${builder_uri} \
+    --buildpack docker.io/paketobuildpacks/go:latest
 
 pack inspect ${SAMPLE}
 
@@ -104,12 +105,12 @@ docker kill ${SAMPLE}
 # --------------------------------------
 export SAMPLE=sample-procfile
 mkdir -p empty-app
-builder_uri="${builder_uri}-${size}"
 log_message "STATE: Building ${SAMPLE} with builder: ${builder_uri}"
 
 pack build ${SAMPLE} --path empty-app --pull-policy if-not-present \
     --env BP_PROCFILE_DEFAULT_PROCESS="echo hello world" \
-    --builder ${builder_uri}
+    --builder ${builder_uri} \
+    --buildpack docker.io/paketobuildpacks/procfile:latest
 
 pack inspect ${SAMPLE}
 
