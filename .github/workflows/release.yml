@@ -24,5 +24,7 @@ jobs:
           password: ${{ secrets.PAKETO_BUILDPACKS_DOCKERHUB_PASSWORD }}
       - id: create-stack-and-push
         run: |
-          ./scripts/build.sh -r docker.io/jericop
+          ./scripts/build.sh \
+            -i jericop/amazonlinux-builder:base \
+            -i jericop/amazonlinux-builder:latest
           

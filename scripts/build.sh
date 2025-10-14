@@ -46,12 +46,13 @@ log_message() {
 }
 
 usage() {
-printf "Usage: $0 [-c -r <registry>]
+printf "Usage: $0 [-c -i <image_ref>] [-i <image_ref2>] ...
 
 Options:
     -c                The script will cleanup after itself
     -h                Prints this help message
-    -r registry       The local registry to push images to (example value could be 'localhost:5001')
+    -i image_ref      The complete image reference to push to (can be specified multiple times)
+                      (example: 'localhost:5001/amazonlinux-builder:v1.0.0')
 
 "
 exit 1
@@ -65,14 +66,15 @@ cleanup_flag=0
 repo_name="amazonlinux-builder"
 registry_name="cnb"
 registry_port=5041
-registry_push=0
+image_push=0
+image_refs=()  # array of image references to push to
 token="" # can be empty or set to a valid token and is used for downloading pack and jam binaries
 
 ########################################
 # Options
 ########################################
 # parse command-line options
-while getopts ":chr:" opt; do
+while getopts ":chi:" opt; do
     case "$opt" in
         c )
             cleanup_flag=1
@@ -80,13 +82,14 @@ while getopts ":chr:" opt; do
         h )
             usage
             ;;
-        r )
-            registry=${OPTARG}
-            if [ -n "$registry" ]; then
-                log_message "STATE: Registry provided as $registry"
-                registry_push=1
+        i )
+            image_ref=${OPTARG}
+            if [ -n "$image_ref" ]; then
+                log_message "STATE: Image reference provided as $image_ref"
+                image_refs+=("$image_ref")
+                image_push=1
             else
-                echo "ERROR: Empty registry string"
+                echo "ERROR: Empty image reference string"
                 exit 1
             fi
             ;;
@@ -124,12 +127,14 @@ log_message "STATE: Creating images (this will take a while)..."
 pack config experimental true
 pack builder create ${local_image} --config builder.toml --publish --verbose
 
-if [[ "${registry_push}" -eq 1 ]]; then
-    log_message "STATE: Images copied to ${registry}"
-    new_image="${registry}/${repo_name}:latest"
-    log_message "STATE: Copying images..."
-    crane copy ${local_image} ${new_image}
-    log_message "STATE: Images copied to ${registry}"
+if [[ "${image_push}" -eq 1 ]]; then
+    log_message "STATE: Copying images to ${#image_refs[@]} destination(s)"
+    for image_ref in "${image_refs[@]}"; do
+        log_message "STATE: Copying image to ${image_ref}..."
+        crane copy ${local_image} ${image_ref}
+        log_message "STATE: Image copied to ${image_ref}"
+    done
+    log_message "STATE: All images copied successfully"
 fi
 
 if [[ "${cleanup_flag}" -eq 1 ]]; then

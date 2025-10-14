@@ -4,6 +4,7 @@ A Cloud Native Buildpack (CNB) builder with amazonlinux 2023 stack **without** b
 This builder uses the amazonlinux stack built from [here](https://github.com/jericop/amazonlinux-stack).
 
 docker hub image URI:
+    * `jericop/amazonlinux-builder:base`
     * `jericop/amazonlinux-builder:latest`
 
 ## Creating the builder
